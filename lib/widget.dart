@@ -18,3 +18,9 @@ Widget brandName() {
     ],
   );
 }
+
+Widget imageLoader(String imgURL, int index) =>
+    Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Image.network(imgURL, fit: BoxFit.cover)
+    );
