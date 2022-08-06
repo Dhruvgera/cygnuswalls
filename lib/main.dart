@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:walls/widget.dart';
 import 'package:flutter/services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:developer';
 import 'dart:math';
 
@@ -67,9 +68,13 @@ setWallpaper(wallpaperURL, int screen) async {
               filePath: savePath, wallpaperLocation: screen, goToHome: false);
               //final file = await File(savePath);
               //await file.delete();
-
+          Fluttertoast.showToast(
+              msg: "Wallpaper has been set!",
+              toastLength: Toast.LENGTH_SHORT,
+          );
           dir.deleteSync(recursive: true);
           dir.create();
+
         }
       },
     );
