@@ -37,7 +37,11 @@ dependencies:
   carousel_slider: ^4.1.1
   fluttertoast: ^8.0.8
   toast: ^0.2.9
-  flutter_cache_manager: ^3.3.0
+  flutter_downloader: ^1.8.1
+  permission_handler: ^10.0.0
+  path_provider: ^2.0.11
+  dio: ^4.0.6
+  async_wallpaper: ^1.0.1
 
 dev_dependencies:
   flutter_test:

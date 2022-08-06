@@ -1,4 +1,9 @@
+import 'package:async_wallpaper/async_wallpaper.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:walls/widget.dart';
 import 'package:flutter/services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -6,6 +11,7 @@ import 'dart:developer';
 
 void main() {
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const CygnusWalls());
 }
 
@@ -36,6 +42,50 @@ addfunc() {
     imgList.add(a + b);
   }
 }
+
+
+
+downloadfunc (downloadurl) async {
+  /* WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
+  final taskId = await FlutterDownloader.enqueue(
+    url: downloadurl,
+    savedDir: '/sdcard/download/',
+    showNotification: true, // show download progress in status bar (for Android)
+    openFileFromNotification: true, // click on notification to open downloaded file (for Android)
+  ); */
+  Map<Permission, PermissionStatus> statuses = await [
+    Permission.storage,
+    //add more permission to request here.
+  ].request();
+
+    var dir = await getTemporaryDirectory();
+    if(dir != null){
+      String savename = "walltobeapplied.png";
+      String savePath = dir.path + "/$savename";
+      print(savePath);
+      //output:  /storage/emulated/0/Download/banner.png
+
+      try {
+        await Dio().download(
+            downloadurl,
+            savePath,
+            onReceiveProgress: (received, total) {
+              if (total != -1) {
+                print((received / total * 100).toStringAsFixed(0) + "%");
+                //you can build progressbar feature too
+              }
+            });
+        print("File is saved to download folder.");
+        //AsyncWallpaper.setWallpaperFromFile(
+        //    savePath, AsyncWallpaper.HOME_SCREEN);
+      } on DioError catch (e) {
+        print(e.message);
+      }
+      return savePath;
+    }
+}
+
 
 class FullscreenSlider extends StatelessWidget {
   const FullscreenSlider({Key? key}) : super(key: key);
@@ -75,7 +125,8 @@ class FullscreenSlider extends StatelessWidget {
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
                     onPressed: () => {
-                      log("URL: ${imgList[imgIndex]}")
+                      //log("URL: ${imgList[imgIndex]}")
+                      downloadfunc(imgList[imgIndex])
                     },
                     child: const Icon(Icons.download),
                   ),
