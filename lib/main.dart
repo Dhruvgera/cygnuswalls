@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:async_wallpaper/async_wallpaper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +8,11 @@ import 'package:walls/widget.dart';
 import 'package:flutter/services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'dart:developer';
+import 'dart:math';
 
 void main() {
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   runApp(const CygnusWalls());
 }
 
@@ -44,8 +47,13 @@ addfunc() {
 
 setWallpaper(wallpaperURL, int screen) async {
   var dir = await getTemporaryDirectory();
-  String savePath = "${dir.path}/wall.png";
-  log(savePath);
+  String generateRandomString(int len) {
+    var r = Random();
+    return String.fromCharCodes(List.generate(len, (index) => r.nextInt(33) + 89));
+  }
+  var rname = generateRandomString(5);
+  String savePath = "${dir.path}/${rname}";
+  // log(savePath);
 
   try {
     await Dio().download(
@@ -56,12 +64,17 @@ setWallpaper(wallpaperURL, int screen) async {
             0)}%";
         if (progressString == "100%") {
           await AsyncWallpaper.setWallpaperFromFile(
-              filePath: savePath, wallpaperLocation: screen, goToHome: true);
+              filePath: savePath, wallpaperLocation: screen, goToHome: false);
+              //final file = await File(savePath);
+              //await file.delete();
+
+          dir.deleteSync(recursive: true);
+          dir.create();
         }
       },
     );
   } on DioError catch (e) {
-    log(e.message);
+    //log(e.message);
   }
 
   return
