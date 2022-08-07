@@ -1,4 +1,4 @@
-import 'dart:io';
+
 
 import 'package:async_wallpaper/async_wallpaper.dart';
 import 'package:dio/dio.dart';
@@ -8,12 +8,12 @@ import 'package:walls/widget.dart';
 import 'package:flutter/services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'dart:developer';
 import 'dart:math';
 
+// Main App Runs here
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []); // Lets go fullscreen
   runApp(const CygnusWalls());
 }
 
@@ -26,15 +26,15 @@ class CygnusWalls extends StatelessWidget {
     return MaterialApp(
         initialRoute: '/',
         darkTheme: ThemeData.dark(),
-        //themeMode: ThemeMode.values.toList()[value as int],
         debugShowCheckedModeBanner: false,
         home: const FullscreenSlider());
   }
 }
 
-final List<String> imgList = [];
+final List<String> imgList = []; // Create a list of all images we will be using later
 int imgIndex = 0;
 
+// Append images from URL to a list
 addfunc() {
   int num = 1;
   String a =
@@ -46,6 +46,7 @@ addfunc() {
 }
 
 
+// Download the wall using Dio and set it
 setWallpaper(wallpaperURL, int screen) async {
   var dir = await getTemporaryDirectory();
   String generateRandomString(int len) {
@@ -54,7 +55,6 @@ setWallpaper(wallpaperURL, int screen) async {
   }
   var rname = generateRandomString(5);
   String savePath = "${dir.path}/${rname}";
-  // log(savePath);
 
   try {
     await Dio().download(
@@ -66,12 +66,12 @@ setWallpaper(wallpaperURL, int screen) async {
         if (progressString == "100%") {
           await AsyncWallpaper.setWallpaperFromFile(
               filePath: savePath, wallpaperLocation: screen, goToHome: false);
-              //final file = await File(savePath);
-              //await file.delete();
+          // Tell the user the job is done
           Fluttertoast.showToast(
               msg: "Wallpaper has been set!",
               toastLength: Toast.LENGTH_SHORT,
           );
+          // Cleanup the cache
           dir.deleteSync(recursive: true);
           dir.create();
 
@@ -79,14 +79,13 @@ setWallpaper(wallpaperURL, int screen) async {
       },
     );
   } on DioError catch (e) {
-    //log(e.message);
   }
 
   return
     savePath;
 }
 
-
+// Slider for all images
 class FullscreenSlider extends StatelessWidget {
   const FullscreenSlider({Key? key}) : super(key: key);
 

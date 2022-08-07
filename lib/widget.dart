@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+// Title bar
 Widget brandName() {
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
@@ -22,6 +23,7 @@ Widget brandName() {
   );
 }
 
+// Loading screen while image is fetched from network
 Widget imageLoader(String imgURL, int index) => Container(
     margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
     child: Image.network(
